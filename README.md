@@ -1,4 +1,4 @@
-# text-style-transfer-with-adversarial-network-and-domain-adaptation
+# text-style-transfer-with-adversarial-network-and-domain-adaptation-and-attention-model
 sorry, relevant codes will be given later.
 the relevant papers are 1.  [Style transfer from non-parallel text by cross-alignment](https://arxiv.org/pdf/1705.09655.pdf)//([code1](https://github.com/shentianxiao/language-style-transfer)//[code2](https://github.com/cookielee77/DAST/tree/master/network))
 
