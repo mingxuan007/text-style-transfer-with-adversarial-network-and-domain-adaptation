@@ -7,7 +7,7 @@ sorry, relevant codes will be given later.
    2.  [Unpaired sentiment-to-sentiment translation: A cycled reinforcement learning approach](https://arxiv.org/pdf/1805.05181.pdf) 
    code:[go](https://github.com/lancopku/unpaired-sentiment-translation)
                         
-   3.  [Toward controlled generation of text](https://arxiv.org/pdf/1703.00955.pdf) [office code](https://github.com/asyml/texar/tree/master/examples/text_style_transfer) 
+   3.  [Toward controlled generation of text](https://arxiv.org/pdf/1703.00955.pdf) office code:[go](https://github.com/asyml/texar/tree/master/examples/text_style_transfer) 
    unoffice code:[go](https://github.com/cookielee77/DAST/tree/master/network)
                         
    4.  [Disentangled representation learning for non-parallel text style transfer](https://www.aclweb.org/anthology/P19-1041.pdf) 
