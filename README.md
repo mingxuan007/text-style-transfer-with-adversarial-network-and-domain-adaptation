@@ -1,7 +1,7 @@
 ## Non-parallel text style transfer with domain adaptation and an attention model
 sorry, relevant codes will be given later.
 ### The relevant papers are 
-   1.  [Style transfer from non-parallel text by cross-alignment](https://arxiv.org/pdf/1705.09655.pdf) [code1](https://github.com/shentianxiao/language-style-transfer) [code2](https://github.com/cookielee77/DAST/tree/master/network)
+   1.  [Style transfer from non-parallel text by cross-alignment](https://arxiv.org/pdf/1705.09655.pdf) ```diff +[code1](https://github.com/shentianxiao/language-style-transfer) [code2](https://github.com/cookielee77/DAST/tree/master/network)```
 
    2.  [Unpaired sentiment-to-sentiment translation: A cycled reinforcement learning approach](https://arxiv.org/pdf/1805.05181.pdf) [code](https://github.com/lancopku/unpaired-sentiment-translation)
                         
