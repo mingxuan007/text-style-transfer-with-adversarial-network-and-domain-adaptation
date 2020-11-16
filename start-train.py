@@ -4,13 +4,13 @@ import time
 import random
 import logging
 from utils import *
-
+import network
 import numpy as np
 import tensorflow as tf
 from nltk.translate.bleu_score import corpus_bleu
 from nltk.translate.bleu_score import SmoothingFunction
-from linguistic_style_transfer_model.evaluators import  style_transfer
-from linguistic_style_transfer_model.config import global_config
+
+
 
 
 
@@ -99,7 +99,7 @@ def evaluation(sess, vocab, batches, model, path,output_path, epoch ):
 
 
 def create_model(sess, args, vocab):
-    model = eval('network.minxns8z' + '.Model')(args, vocab)
+    model = eval('network' + '.Model')(args, vocab)
 
 
     """logger.info('-----Loading styler model from: -----')
