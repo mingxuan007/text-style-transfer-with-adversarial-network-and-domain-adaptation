@@ -8,7 +8,7 @@ import os
 import tensorflow as tf
 
 
-import TextCNN
+from TextCNN import TextCNN
 
 
 logger = None
