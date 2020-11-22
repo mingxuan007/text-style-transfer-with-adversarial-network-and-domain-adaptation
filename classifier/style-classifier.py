@@ -156,7 +156,7 @@ def main(argv):
     global logger
     logger = log_initializer.setup_custom_logger(global_config.logger_name, options['logging_level'])
 
-    os.makedirs(global_config.classifier_save_directory)
+    
 
     train_classifier_model(options)
 
