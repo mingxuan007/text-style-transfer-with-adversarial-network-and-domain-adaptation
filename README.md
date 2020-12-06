@@ -18,6 +18,8 @@ codes have been uploading, and then i will modify relevant file routes for runni
    
 ### Start
 first: to download the yelp dataset from [the repository](https://github.com/cookielee77/DAST/tree/master/network) and put it to the data folder;
+
 sencond: to run classifier/style-classifier.py to train a style classifier to evaluate the transferred sentences;
+
 third: to run start-train.py for transferring sentences
        
