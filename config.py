@@ -17,14 +17,17 @@ def load_arguments():
     # data path
     argparser.add_argument('--dataDir',
             type=str,
-            default='/share/nishome/20010431_1/Desktop/DASTy')
+            default='./data')
     argparser.add_argument('--dataset',
             type=str,
             default='yelp',
             help='if doman_adapt enable, dataset means target dataset')
+    argparser.add_argument('--style_words_path',
+            type=str,
+            default='./style_words/yelp.txt')
     argparser.add_argument('--modelDir',
             type=str,
-            default='/share/nishome/20010431_1/Desktop/DASTy/save')
+            default='./save_model')
     argparser.add_argument('--logDir',
             type=str,
             default='')
