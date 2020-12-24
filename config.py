@@ -28,7 +28,16 @@ def load_arguments():
     argparser.add_argument('--logDir',
             type=str,
             default='')
-
+    #glove100d   path
+    argparser.add_argument('--validation_embeddings_file_path',
+            type=str,
+            default='')
+    argparser.add_argument('--style_file_path',
+            type=str,
+            default='./save_model/style')
+    argparser.add_argument('--domain_file_path',
+            type=str,
+            default='./save_model/domain')
     # general model setting
     argparser.add_argument('--learning_rate',
             type=float,
@@ -46,22 +55,9 @@ def load_arguments():
     argparser.add_argument('--max_len',
             type=int,
             default=16,
-            help='the max length of sequence')
-    argparser.add_argument('--noise_word',
-            default=False,
-            help='whether add noise in enc batch.')
-    argparser.add_argument('--trim_padding',
-            action='store_true',
-            default=False)
-    argparser.add_argument('--order_data',
-            action='store_true',
-            help='whether order the data according the length in the dataset.')
+            help='the max length of sequence+one mark')
 
-  
-    argparser.add_argument('--confidence',
-            type=float,
-            default=0.8,
-            help='The classification confidence used to filter the data')
+
 
    
     argparser.add_argument('--rho',                 # loss_rec + rho * loss_adv
@@ -88,6 +84,7 @@ def load_arguments():
     argparser.add_argument('--dim_y',
             type=int,
             default=200)
+    #500 represent the dim of content information in latent representation
     argparser.add_argument('--dim_z',
             type=int,
             default=500)
@@ -123,7 +120,7 @@ def load_arguments():
             default=True)
     argparser.add_argument('--source_dataset',
             type=str,
-            default='filter_imdb')
+            default='imdb')
     argparser.add_argument('--dim_d',
             type=int,
             default=50,
@@ -137,33 +134,11 @@ def load_arguments():
 
 
     args = argparser.parse_args()
-    # check whether use online annotated dataset from human
-    if args.dataset in ['yelp', 'amazon']:
-        args.online_test = True
+
 
     # update data path according to single dataset or multiple dataset
 
-    args.dataDir = os.path.join(args.dataDir, 'data')
-    data_root = os.path.join(args.dataDir, args.dataset)
-    args.train_path = os.path.join(data_root, 'train')
 
-    args.test_path = os.path.join(data_root, 'test')
-    args.vocab = os.path.join(data_root, 'vocab')
-    args.source_vocab = os.path.join(data_root, 'source_vocab')
-    
-    args.target_train_path = os.path.join(data_root, 'train')
-
-    args.target_test_path = os.path.join(data_root, 'test')
-    source_data_root = os.path.join(args.dataDir, args.source_dataset)
-    args.source_train_path = os.path.join(source_data_root, 'trainy')
-    args.source_train_pathz = os.path.join(source_data_root, 'train')
-
-    args.source_test_path = os.path.join(source_data_root, 'test')
-    # update output path
-    args.modelDir = os.path.join(args.modelDir, 'save_model')
-    args.classifier_path = os.path.join(args.modelDir, 'classifier', args.dataset)
-    args.lm_path = os.path.join(args.modelDir, 'lm', args.dataset)
-    args.styler_path = os.path.join(args.modelDir, args.network, args.dataset)
 
     update_domain_adapt_datapath(args)
     # update batch size if using parallel training
@@ -172,9 +147,9 @@ def load_arguments():
 
     # update output path
     if not args.logDir:
-        # if not in philly enviroment
+
         args.logDir = 'logs'
-        args.logDir = os.path.join(args.logDir, 'XXX', args.suffix)
+
     log_dir = Path(args.logDir)
 
     if not log_dir.exists():
@@ -182,12 +157,11 @@ def load_arguments():
         log_dir.mkdir(parents = True)
 
     time_str = time.strftime('%Y-%m-%d-%H-%M')        
-    log_file = '{}_{}_{}.log'.format('resAAw_lossgy', args.suffix, time_str)
-    # update the suffix for tensorboard file name
-    args.suffix = '{}_{}_{}'.format('resAAw_lossgy', args.suffix, time_str)
+    log_file = '{}.log'.format(time_str)
+
 
     final_log_file = log_dir / log_file
-    print('12345qw',final_log_file)
+
     head = '%(asctime)-15s %(message)s'
     logging.basicConfig(filename=str(final_log_file),
                         format=head)
@@ -228,8 +202,7 @@ def update_domain_adapt_datapath(args):
     # save the togather vocab in common root 'data/multi_vocab'
     args.multi_vocab = os.path.join(
         args.dataDir, '_'.join([args.source_dataset, args.dataset, 'multi_vocab']))
-    args.mvocabz = os.path.join(
-        args.dataDir, '_'.join([args.source_dataset, args.dataset, 'mvocabz']))
+
     # update output path
     args.modelDir = os.path.join(args.modelDir, 'save_model')
     args.classifier_path = os.path.join(args.modelDir, 'classifier', args.dataset)
