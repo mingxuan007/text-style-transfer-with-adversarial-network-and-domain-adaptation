@@ -23,8 +23,9 @@ os.environ["CUDA_VISIBLE_DEVICES"]='0'
 smoothie = SmoothingFunction().method4
 import json
 logger = logging.getLogger(__name__)
-classifier_saved_model_path=''
-domain_classifier_model=''
+args = load_arguments()
+style_model_path=args.style_file_path
+domain_model_path=args.domain_file_path
 
 validation_embeddings_file_path='/share/nishome/20010431_1/Documents/glove.6B.100d.txt'
 def evaluation(sess, vocab, batches, model, path,output_path, epoch ):
@@ -65,12 +66,12 @@ def evaluation(sess, vocab, batches, model, path,output_path, epoch ):
         a=np.concatenate((a,batch.labels),axis=0)
     # evaluate 
     [style_transfer_score, confusion_matrix] = style_transfer.get_style_transfer_score3(
-        classifier_saved_model_path, transfer, a)
+        style_model_path, transfer, a)
     [domain_acc, confusion_matrix] = style_transfer.get_style_transfer_score1(
-        domain_classifier_model, transfer, 1, None)
+       domain_model_path, transfer, 1, None)
     glove_model = load_glove_model(validation_embeddings_file_path)
     content_preservation_score = get_content_preservation_score(
-        ori_ref, ltsf, glove_model)
+        ori_ref, ltsf, args.validation_embeddings_file_path)
     word_overlap_score = get_word_overlap_score(
         ori_ref, ltsf)
     ori_b = []
@@ -120,7 +121,7 @@ if __name__ == '__main__':
    
     config.gpu_options.allow_growth = True
     with tf.Session(config=config) as sess:
-        args = load_arguments()
+       
 
         if not os.path.isfile(args.vocab):
             build_vocab(args.train_path, args.vocab)
