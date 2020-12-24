@@ -187,7 +187,7 @@ def update_domain_adapt_datapath(args):
     target_data_root = os.path.join(args.dataDir, args.dataset)
     args.target_train_path = os.path.join(target_data_root, 'train')
     args.train_path = os.path.join(target_data_root, 'train')
-    args.target_valid_path = os.path.join(target_data_root, 'valid')
+ 
     args.target_test_path = os.path.join(target_data_root, 'test')
     args.test_path = os.path.join(target_data_root, 'test')
     # the vocabulary used for classifier evaluation
@@ -196,8 +196,7 @@ def update_domain_adapt_datapath(args):
     # source data
     source_data_root = os.path.join(args.dataDir, args.source_dataset)
     args.source_train_path = os.path.join(source_data_root, 'train')
-    args.source_train_pathz = os.path.join(source_data_root, 'train')
-    args.source_valid_path = os.path.join(source_data_root, 'valid')
+
     args.source_test_path = os.path.join(source_data_root, 'test')
     # the vocabulary used for classifier evaluation
     args.source_vocab = os.path.join(source_data_root, 'vocab')
@@ -208,8 +207,8 @@ def update_domain_adapt_datapath(args):
 
     # update output path
     args.modelDir = os.path.join(args.modelDir, 'save_model')
-    args.classifier_path = os.path.join(args.modelDir, 'classifier', args.dataset)
+    
     args.lm_path = os.path.join(args.modelDir, 'lm', args.dataset)
-    args.styler_path = os.path.join(args.modelDir, args.network, args.dataset)
+    args.transfer_model_path = os.path.join(args.modelDir, 'transfer')
 
     return args
