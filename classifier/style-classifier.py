@@ -14,6 +14,20 @@ from TextCNN import TextCNN
 logger = None
 
 
+def setup_custom_logger(name, log_level):
+    formatter = logging.Formatter(
+        fmt="%(asctime)s: %(message)s",
+        datefmt="%m-%dT%H:%M:%S")
+
+    handler = logging.StreamHandler()
+    handler.setFormatter(formatter)
+
+    logger = logging.getLogger(name)
+    logger.setLevel(log_level)
+    logger.addHandler(handler)
+
+    return logger
+
 def train_classifier_model(options):
     # Load data
     logger.info("Loading data...")
@@ -78,15 +92,12 @@ def train_classifier_model(options):
 
         
 
-        # Checkpoint directory. Tensorflow assumes this directory already exists so we need to create it
-        checkpoint_dir = os.path.abspath(os.path.join(out_dir, "checkpoints"))
-        checkpoint_prefix = os.path.join(checkpoint_dir, "model")
-        if not os.path.exists(checkpoint_dir):
-            os.makedirs(checkpoint_dir)
+
+ 
         saver = tf.train.Saver(var_list=tf.global_variables(), max_to_keep=1)
 
         # Write vocabulary
-        with open(global_config.classifier_vocab_save_path, 'w') as json_file:
+        with open(options[vocab_file_path], 'w') as json_file:
             json.dump(word_index, json_file)
             logger.info("Saved vocabulary")
 
@@ -138,10 +149,10 @@ def train_classifier_model(options):
                 accuracy=dev_step(x_dev, y_dev, writer=dev_summary_writer)
                 logger.info("")
             if current_step % 100 == 0:
-                path = saver.save(sess, checkpoint_prefix, global_step=current_step)
+                path = saver.save(sess, options["model-file-path"], global_step=current_step)
                 logger.info("Saved model checkpoint to {}\n".format(path))
                 if current_step>25000:
-                    if accuracy > 0.978:
+                    if accuracy > 0.96:
                         break
 
 def main(argv):
@@ -151,10 +162,11 @@ def main(argv):
     
     parser.add_argument("--training-epochs", type=int, default=20)
     parser.add_argument("--logging-level", type=str, default="INFO")
-
+    parser.add_argument("--model-file-path",type=str,default='./save-model/style')
+    parser.add_argument("--vocab-file-path",type=str,default='./save-model/style/vocab.txt')
     options = vars(parser.parse_args(args=argv))
     global logger
-    logger = log_initializer.setup_custom_logger(global_config.logger_name, options['logging_level'])
+    logger = setup_custom_logger(global_config.logger_name, options['logging_level'])
 
     
 
