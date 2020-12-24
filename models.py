@@ -75,15 +75,7 @@ class BaseModel(object):
                                        name='sd_enc_lens')
         self.content_lens = tf.placeholder(tf.int32, [None],
                                        name='content_lens')
-        self.input_bow_representationc = tf.placeholder(
-            dtype=tf.float32, shape=[None, None],
-            name="input_bow_representations")
-        self.nouns = tf.placeholder(
-            dtype=tf.float32, shape=[None, None],
-            name="nouns")
-        self.input_bow_representation = tf.placeholder(
-            dtype=tf.float32, shape=[None, None],
-            name="input_bow_representationsy")
+
     def create_cell(self, dim, n_layers, dropout, scope=None):
         with tf.variable_scope(scope or "rnn"):
             cell = tf.nn.rnn_cell.GRUCell(dim)
