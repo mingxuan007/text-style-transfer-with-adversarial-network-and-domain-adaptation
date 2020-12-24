@@ -7,15 +7,25 @@ import json
 import numpy as np
 import os
 import tensorflow as tf
-os.environ["CUDA_VISIBLE_DEVICES"]='2'
-from linguistic_style_transfer_model.config import global_config
-from linguistic_style_transfer_model.config.model_config import mconf
-from linguistic_style_transfer_model.Textc import TextCNN
-from linguistic_style_transfer_model.utils import data_processor, log_initializer, tf_session_helper
+#os.environ["CUDA_VISIBLE_DEVICES"]='2'
+
+from TextCNN import TextCNN
 
 logger = None
 
+def setup_custom_logger(name, log_level):
+    formatter = logging.Formatter(
+        fmt="%(asctime)s: %(message)s",
+        datefmt="%m-%dT%H:%M:%S")
 
+    handler = logging.StreamHandler()
+    handler.setFormatter(formatter)
+
+    logger = logging.getLogger(name)
+    logger.setLevel(log_level)
+    logger.addHandler(handler)
+
+    return logger
 def train_classifier_model(options):
     # Load data
     logger.info("Loading data...")
@@ -93,7 +103,11 @@ def train_classifier_model(options):
             embedding_matrix[i] = embedding_vector
     embedding_matrix=tf.convert_to_tensor(embedding_matrix,dtype=tf.float32)
     # Training
-    sess = tf_session_helper.get_tensorflow_session()
+    gpu_options = tf.GPUOptions(allow_growth=True)
+    config_proto = tf.ConfigProto(
+        log_device_placement=False, allow_soft_placement=True,
+        gpu_options=gpu_options)
+    sess = tf.Session(config=config_proto)
     with sess.as_default():
         cnn = TextCNN(
             sequence_length=x_train.shape[1],
@@ -130,16 +144,11 @@ def train_classifier_model(options):
         dev_summary_writer = tf.summary.FileWriter(dev_summary_dir, sess.graph)
 
         # Checkpoint directory. Tensorflow assumes this directory already exists so we need to create it
-        checkpoint_dir = os.path.abspath(os.path.join(out_dir, "checkpoints"))
-        checkpoint_prefix = os.path.join(checkpoint_dir, "model")
-        if not os.path.exists(checkpoint_dir):
-            os.makedirs(checkpoint_dir)
+        
+
         saver = tf.train.Saver(var_list=tf.global_variables(), max_to_keep=1)
 
-        # Write vocabulary
-        with open(global_config.classifier_vocab_save_path, 'w') as json_file:
-            json.dump(word_index, json_file)
-            logger.info("Saved vocabulary")
+
 
         # Initialize all variables
         sess.run(tf.global_variables_initializer())
@@ -185,15 +194,12 @@ def train_classifier_model(options):
 
             train_step(x_batch, y_batch)
             current_step = tf.train.global_step(sess, global_step)
-            """if current_step % 100 == 0:
-                logger.info("\nEvaluation:")
-                accuracy=dev_step(x_dev, y_dev, writer=dev_summary_writer)
-                logger.info("")"""
+
 
             if current_step % 200 == 0:
                 logger.info("\nEvaluation:")
                 accuracy = dev_step(x_test, y_test, writer=dev_summary_writer)
-                path = saver.save(sess, checkpoint_prefix, global_step=current_step)
+                path = saver.save(sess, options[model-file-path], global_step=current_step)
                 logger.info("Saved model checkpoint to {}\n".format(path))
                 if current_step>20000:
                     if accuracy > 0.98:
@@ -206,14 +212,15 @@ def main(argv):
    
     parser.add_argument("--dtext-file-path", type=str,
                         default='./data/imdb/train.txt')
-
+    parser.add_argument("--model-file-path", type=str,
+                        default='./save_model/style')
     parser.add_argument("--vocab-size", type=int, default=10000)
     parser.add_argument("--training-epochs", type=int, default=20)
     parser.add_argument("--logging-level", type=str, default="INFO")
     parser.add_argument("--embedding",type=str,default='/share/nishome/20010431_1/Downloads/glove.6B.300d.txt')
     options = vars(parser.parse_args(args=argv))
     global logger
-    logger = log_initializer.setup_custom_logger(global_config.logger_name, options['logging_level'])
+    logger = setup_custom_logger(global_config.logger_name, options['logging_level'])
 
     os.makedirs(global_config.classifier_save_directory)
 
