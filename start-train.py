@@ -14,12 +14,12 @@ from nltk.translate.bleu_score import SmoothingFunction
 
 
 
-from vocab import Vocabulary, build_vocab
+from vocab import Vocabulary, build_unify_vocab
 from config import load_arguments
 from dataloader.style_dataloader import StyleDataloader
 from dataloader.multi_style_dataloader import MultiStyleDataloader
 
-os.environ["CUDA_VISIBLE_DEVICES"]='0'
+#os.environ["CUDA_VISIBLE_DEVICES"]='0'
 smoothie = SmoothingFunction().method4
 import json
 logger = logging.getLogger(__name__)
@@ -27,7 +27,7 @@ args = load_arguments()
 style_model_path=args.style_file_path
 domain_model_path=args.domain_file_path
 
-validation_embeddings_file_path='/share/nishome/20010431_1/Documents/glove.6B.100d.txt'
+validation_embeddings_file_path=args.validation_embeddings_file_path
 def evaluation(sess, vocab, batches, model, path,output_path, epoch ):
     transfer_acc = 0
     origin_acc = 0
@@ -66,9 +66,9 @@ def evaluation(sess, vocab, batches, model, path,output_path, epoch ):
         a=np.concatenate((a,batch.labels),axis=0)
     # evaluate 
     [style_transfer_score, confusion_matrix] = style_transfer.get_style_transfer_score3(
-        style_model_path, transfer, a)
+        style_model_path, transfer, 1-a)
     [domain_acc, confusion_matrix] = style_transfer.get_style_transfer_score1(
-       domain_model_path, transfer, 1, None)
+       domain_model_path, transfer, 1)
     glove_model = load_glove_model(validation_embeddings_file_path)
     content_preservation_score = get_content_preservation_score(
         ori_ref, ltsf, args.validation_embeddings_file_path)
@@ -100,18 +100,18 @@ def evaluation(sess, vocab, batches, model, path,output_path, epoch ):
 
 
 def create_model(sess, args, vocab):
-    model = eval('network' + '.Model')(args, vocab)
+    model = eval('network.Model')(args, vocab)
+
+    if args.load_model:
+       logger.info('-----Loading styler model from: -----')
+       model.saver.restore(sess, args.transfer_model_path)
+    else:
+       logger.info('-----Creating styler model with fresh parameters.-----')
+       sess.run(tf.global_variables_initializer())
 
 
-    """logger.info('-----Loading styler model from: -----')
-    model.saver.restore(sess, '/share/nishome/20010431_1/Desktop/DASTy/save/save_model/NNN/5')"""
-
-    logger.info('-----Creating styler model with fresh parameters.-----')
-    sess.run(tf.global_variables_initializer())
-
-
-    if not os.path.exists(args.styler_path):
-            os.makedirs(args.styler_path)
+    if not os.path.exists(args.transfer_model_path):
+            os.makedirs(args.transfer_model_path)
     return model
 from utils import bow_len
 if __name__ == '__main__':
@@ -123,10 +123,9 @@ if __name__ == '__main__':
     with tf.Session(config=config) as sess:
        
 
-        if not os.path.isfile(args.vocab):
-            build_vocab(args.train_path, args.vocab)
-\
-        vocab = Vocabulary(args.vocab)
+        if not os.path.isfile(args.multi_vocab):
+            build_unify_vocab([args.target_train_path, args.source_train_path], args.multi_vocab)
+        multi_vocab = Vocabulary(args.multi_vocab)
         logger.info('vocabulary size: %d' % vocab.size)
     
 
@@ -193,4 +192,4 @@ if __name__ == '__main__':
             if epoch>5:
                 acc, bleu = evaluation(sess, vocab, tes_batches, model,
                 path1, path1y,  epoch)
-
+                model.saver.save(sess,args.transfer_model_path)
