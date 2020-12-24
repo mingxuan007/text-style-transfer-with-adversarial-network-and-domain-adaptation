@@ -10,7 +10,7 @@ from datetime import datetime as dt
 #logger_name = "linguistic_style_transfer"
 
 experiment_timestamp = dt.now().strftime("%Y%m%d%H%M%S")
-save_directory = "/share/nishome/20010431_1/XXX/linguistic_style_transfer_model/saved-models/{}".format(experiment_timestamp)
+save_directory = "./saved-models/{}".format(experiment_timestamp)
 
 def load_arguments():
     argparser = argparse.ArgumentParser(sys.argv[0])
@@ -50,7 +50,7 @@ def load_arguments():
             default=128)
     argparser.add_argument('--pretrain_epochs',
             type=int,
-            default=10,
+            default=5,
             help='max pretrain epoch for LM.')
     argparser.add_argument('--max_epochs',
             type=int,
