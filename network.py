@@ -72,7 +72,7 @@ class Model(BaseModel):
             # mask the sequences
             drop = tf.nn.dropout(attention_output, self.dropout)
             attention_outputy = self.attention(rnn_outputsy)
-            # mask the sequences
+
             dropy = tf.nn.dropout(attention_outputy, self.dropout)
             with tf.name_scope('Fully_connected_layer'):
                 W = tf.Variable(
@@ -170,21 +170,6 @@ class Model(BaseModel):
 
   
 
-    def run_discriminatorz(self, real_sents, real_sentsz, fake, labels, labelsz, args):
-        #####   discriminator   #####
-        filter_sizes = [int(x) for x in args.filter_sizes.split(',')]
-        rev_labels = 1 - labelsz
-
-        d_real = self.cnn(real_sents, filter_sizes, args.n_filters, self.dropout, 'classifer')
-        d_fake = self.cnn(real_sentsz, filter_sizes, args.n_filters, self.dropout, 'classifer', reuse=True)
-        fakey = self.cnn(fake, filter_sizes, args.n_filters, self.dropout, 'classifer', reuse=True)
-        loss_d = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(
-            labels=labels, logits=d_real))
-        loss_g = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(
-            labels=rev_labels, logits=d_fake))
-        loss_dy = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(
-            labels=labels, logits=fakey))
-        return loss_d + loss_g, loss_dy
 
     def reconstructionz(self, encoder, enc_inputs, labels,
                         decoder, dec_inputs, targets, dec_mask, projection):
