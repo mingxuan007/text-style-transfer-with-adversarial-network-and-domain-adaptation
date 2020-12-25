@@ -4,7 +4,7 @@ import logging
 import sys
 import tensorflow as tf
 import numpy as np
-
+import json
 
 
 logger = logging.getLogger(__name__)
@@ -14,7 +14,7 @@ from spacy.lang.en.stop_words import STOP_WORDS as spacy_stopwords
 from scipy.spatial.distance import cosine
 import statistics
 from config import load_arguments
-args=load_arguments()
+args=load_arguments(1)
 
 
 
@@ -188,28 +188,46 @@ def get_style_words():
     words = set(word.strip() for word in words)
     return words
 
-def get_style_transfer_score(classifier_saved_model_path, text_file, label, label_file_path):
+
+def batch_iter(data, batch_size, num_epochs, shuffle=True):
+    """
+    Generates a batch iterator for a dataset.
+    """
+    data = np.array(data)
+    data_size = len(data)
+    num_batches_per_epoch = int((len(data) - 1) / batch_size) + 1
+    for epoch in range(num_epochs):
+        # Shuffle the data at each epoch
+        if shuffle:
+            shuffle_indices = np.random.permutation(np.arange(data_size))
+            shuffled_data = data[shuffle_indices]
+        else:
+            shuffled_data = data
+        for batch_num in range(num_batches_per_epoch):
+            start_index = batch_num * batch_size
+            end_index = min((batch_num + 1) * batch_size, data_size)
+            yield shuffled_data[start_index:end_index]
+def get_style_transfer_score(classifier_saved_model_path, text_file, label):
     with open(os.path.join(classifier_saved_model_path,
-                           vocab.txt), 'r') as json_file:
+                           "vocab.txt"), 'r') as json_file:
         word_index = json.load(json_file)
     vocab_size = len(word_index)
 
-    text_tokenizer = tf.keras.preprocessing.text.Tokenizer(
-        num_words=global_config.vocab_size, filters=global_config.tokenizer_filters)
+    text_tokenizer = tf.keras.preprocessing.text.Tokenizer(filters='!"#$%&()*+-./:=?@[\\]^_`{|}~\t\n')
     text_tokenizer.word_index = word_index
 
 
     actual_sequences = text_tokenizer.texts_to_sequences(text_file)
     trimmed_sequences = [
-        [x if x < vocab_size else word_index[global_config.unk_token] for x in sequence]
+        [x if x < vocab_size else word_index["<unk>"] for x in sequence]
         for sequence in actual_sequences]
     text_sequences = tf.keras.preprocessing.sequence.pad_sequences(
-        trimmed_sequences, maxlen=global_config.max_sequence_length, padding='post',
-        truncating='post', value=word_index[global_config.eos_token])
+        trimmed_sequences, maxlen=args.max_len-1, padding='post',
+        truncating='post', value=word_index["<eos>"])
 
     x_test = np.asarray(text_sequences)
 
-    if type(y_test)!=list:
+    if type(label)==int:
        y_test = np.asarray([int(label)] * len(text_sequences))
     else:
        y_test = np.asarray(label) 
@@ -218,7 +236,11 @@ def get_style_transfer_score(classifier_saved_model_path, text_file, label, labe
         os.path.join(classifier_saved_model_path, "checkpoints"))
     graph = tf.Graph()
     with graph.as_default():
-        sess = tf_session_helper.get_tensorflow_session()
+        gpu_options = tf.GPUOptions(allow_growth=True)
+        config_proto = tf.ConfigProto(
+            log_device_placement=False, allow_soft_placement=True,
+            gpu_options=gpu_options)
+        sess = tf.Session(config=config_proto)
         with sess.as_default():
             # Load the saved meta graph and restore variables
             saver = tf.train.import_meta_graph("{}.meta".format(checkpoint_file))
@@ -233,7 +255,7 @@ def get_style_transfer_score(classifier_saved_model_path, text_file, label, labe
             predictions = graph.get_operation_by_name("output/predictions").outputs[0]
 
             # Generate batches for one epoch
-            batches = data_processor.batch_iter(list(x_test), mconf.batch_size, 1, shuffle=False)
+            batches =batch_iter(list(x_test), args.batch_size, 1, shuffle=False)
 
             # Collect the predictions here
             all_predictions = []
@@ -249,10 +271,9 @@ def get_style_transfer_score(classifier_saved_model_path, text_file, label, labe
         correct_predictions = float(sum(all_predictions == y_test))
         accuracy = correct_predictions / float(len(y_test))
         # f1_score = metrics.f1_score(y_true=y_test, y_pred=all_predictions)
-        confusion_matrix = metrics.confusion_matrix(y_true=y_test, y_pred=all_predictions)
-        return [accuracy, confusion_matrix]
+        #confusion_matrix = metrics.confusion_matrix(y_true=y_test, y_pred=all_predictions)
+        return accuracy
 
     logger.info("Nothing to evaluate")
-    return [0.0, None]
-
+    return 0
 
