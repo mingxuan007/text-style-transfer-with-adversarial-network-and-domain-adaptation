@@ -221,8 +221,8 @@ def train_classifier_model(options):
 def main(argv):
     parser = argparse.ArgumentParser()
     parser.add_argument("--text-file-path", type=str, default='../data/yelp/train/ntrain.txt')
-    #
-    parser.add_argument("--embedding", type=str, default='/share/nishome/20010431_1/Downloads/glove.6B.300d.txt')
+    #glove path
+    parser.add_argument("--embedding", type=str, default='../glove.6B.300d.txt')
     parser.add_argument("--training-epochs", type=int, default=20)
     parser.add_argument("--logging-level", type=str, default="INFO")
     parser.add_argument("--model-file-path",type=str,default='../save_model/style')
