@@ -1,6 +1,6 @@
 import random
 
-from dataloader.Dataloader import Dataloader
+from loader.Dataloader import Dataloader
 #Dataloader for source and target
 class MultiDataloader(Dataloader):
     def __init__(self, hps, vocab):
@@ -50,4 +50,3 @@ class MultiDataloader(Dataloader):
                 raise ValueError('Wrong mode name: %s.' % mode)
         else:
             raise ValueError('Wrong domain name: %s.' % domain)
-
