@@ -2,7 +2,7 @@ import numpy as np
 import tensorflow as tf
 import sys
 
-from network.nn import leaky_relu, softsample_word, argmax_word
+from ops import leaky_relu, softsample_word, argmax_word
 
 
 class BaseModel(object):
@@ -134,4 +134,3 @@ class BaseModel(object):
         return soft_tsf_hiddens, soft_tsf_ids, rec_ids, tsf_ids
 
     
-
