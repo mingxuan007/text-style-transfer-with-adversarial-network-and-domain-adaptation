@@ -1,5 +1,5 @@
-## Non-parallel text style transfer with domain adaptation and an attention model
-codes have been uploading, and then i will modify relevant file routes for running these codes. (sorry, i recently have somethings to do, leading the upload be slow)
+## Non-parallel text style transfer with domain adaptation and an attention model (include adversarial network)
+codes have been uploading and bebugged, welcome to learn my paper though the model in it is not very advanced.)
 ### The relevant papers are 
    1.  [Style transfer from non-parallel text by cross-alignment](https://arxiv.org/pdf/1705.09655.pdf) 
    code1:[go](https://github.com/shentianxiao/language-style-transfer) code2:[go](https://github.com/cookielee77/DAST/tree/master/network)
@@ -17,9 +17,17 @@ codes have been uploading, and then i will modify relevant file routes for runni
    code:[go](https://github.com/cookielee77/DAST/tree/master/network)
    
 ### Start
-first: to download the yelp dataset from [the repository](https://github.com/cookielee77/DAST/tree/master/network) and put it to the data folder;
+first: to download the yelp and imdb dataset from [the repository](https://github.com/cookielee77/DAST/tree/master/network) and put it to the data folder;
 
-sencond: to run classifier/style-classifier.py to train a style classifier to evaluate the transferred sentences;
+second: to run data_filter.py to filter the imdb dataset;
 
-third: to run start-train.py for transferring sentences
+third: to download glove 300d 100d, and add the path in the corresponding parameters of config.py and style.py, domain.py;
+
+forth: to add relative parameters of mode paths, training;
+
+fifth: to run classifier/style.py and domain train  style and domain classifiers to evaluate the transferred sentences;
+
+sixth: to run start-train.py for transferring sentences
        
+### Acknowledge
+The publication of the paper cannot leave with the helps and suggestions of the reviewers, they guide me how to improve my paper well; and my teacher Min He is a good teacher to support me to research new direction. And i am appreciate the journal -- applied intelligence which provide the chance for me to publish my paper.
