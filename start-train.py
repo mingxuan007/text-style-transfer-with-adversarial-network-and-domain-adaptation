@@ -3,31 +3,35 @@ import sys
 import time
 import random
 import logging
-from utils import *
+from until import *
 import network
 import numpy as np
 import tensorflow as tf
 from nltk.translate.bleu_score import corpus_bleu
 from nltk.translate.bleu_score import SmoothingFunction
+import pprint
+#os.environ["CUDA_VISIBLE_DEVICES"]='1'
 
 
 
-
-
-from vocab import Vocabulary, build_unify_vocab
+from vocab import Vocabulary, build_vocab
 from config import load_arguments
-from dataloader.style_dataloader import StyleDataloader
-from dataloader.multi_style_dataloader import MultiStyleDataloader
 
-#os.environ["CUDA_VISIBLE_DEVICES"]='0'
+from loader.MultiData import MultiDataloader
+
+
 smoothie = SmoothingFunction().method4
 import json
 logger = logging.getLogger(__name__)
-args = load_arguments()
+args = load_arguments(0)
 style_model_path=args.style_file_path
 domain_model_path=args.domain_file_path
-
+print("sty",style_model_path)
+print("dom",domain_model_path)
 validation_embeddings_file_path=args.validation_embeddings_file_path
+logger.info('------------------------------------------------')
+logger.info(pprint.pformat(args))
+logger.info('------------------------------------------------')
 def evaluation(sess, vocab, batches, model, path,output_path, epoch ):
     transfer_acc = 0
     origin_acc = 0
@@ -65,9 +69,9 @@ def evaluation(sess, vocab, batches, model, path,output_path, epoch ):
             ltsf.append(x.split())
         a=np.concatenate((a,batch.labels),axis=0)
     # evaluate 
-    [style_transfer_score, confusion_matrix] = style_transfer.get_style_transfer_score3(
+    style_transfer_score = get_style_transfer_score(
         style_model_path, transfer, 1-a)
-    [domain_acc, confusion_matrix] = style_transfer.get_style_transfer_score1(
+    domain_acc = get_style_transfer_score(
        domain_model_path, transfer, 1)
     glove_model = load_glove_model(validation_embeddings_file_path)
     content_preservation_score = get_content_preservation_score(
@@ -113,7 +117,7 @@ def create_model(sess, args, vocab):
     if not os.path.exists(args.transfer_model_path):
             os.makedirs(args.transfer_model_path)
     return model
-from utils import bow_len
+
 if __name__ == '__main__':
     config = tf.ConfigProto()
 
@@ -123,12 +127,12 @@ if __name__ == '__main__':
     with tf.Session(config=config) as sess:
        
 
-        if not os.path.isfile(args.multi_vocab):
-            build_unify_vocab([args.target_train_path, args.source_train_path], args.multi_vocab)
-        multi_vocab = Vocabulary(args.multi_vocab)
+        if not os.path.isfile(args.vocab):
+            build_vocab(args.target_train_path, args.vocab)
+        vocab = Vocabulary(args.vocab)
         logger.info('vocabulary size: %d' % vocab.size)
-    
 
+        tensorboard_dir = os.path.join(args.logDir, 'tensorboard')
         
         if not os.path.exists(tensorboard_dir):
             os.makedirs(tensorboard_dir)
@@ -138,7 +142,7 @@ if __name__ == '__main__':
         }
         
         # load data
-        loader = MultiStyleDataloader(args, vocab)
+        loader = MultiDataloader(args, vocab)
       
         # create a folder for data samples
         output_path = os.path.join(args.logDir, args.dataset)
@@ -172,7 +176,7 @@ if __name__ == '__main__':
         gamma = args.gamma_init
         tes_batches = loader.get_batches(domain='target',mode='test')
 
-        for epoch in range(1, 45):
+        for epoch in range(1,args.max_epochs+1):
             logger.info('--------------------epoch %d--------------------' % epoch)
             logger.info('learning_rate: %.4f  gamma: %.4f' % (learning_rate, gamma))
 
@@ -181,15 +185,16 @@ if __name__ == '__main__':
             
             for i in range(total_batch):
                 result1=model.run_train_step(sess,batches[i % len(batches)], sd_batches[i % len(sd_batches)], accumulator,
-                                     epoch)
+                                     epoch,args.pretrain_epochs)
                 # train 300 step (mini-batch) to show the obejective loss values
                 if step % 300 == 0:
                
                     accumulator.output('step %d, time %.0fs,'
-                        % (step, time.time() - start_time),  'train')
+                        % (step, time.time() - start_time), write_dict, 'train')
                     accumulator.clear()
-            #after pre-train, evaluation model        
-            if epoch>5:
+            #after pre-train, evaluation model
+                step+=1
+            if epoch>args.pretrain_epochs:
                 acc, bleu = evaluation(sess, vocab, tes_batches, model,
                 path1, path1y,  epoch)
                 model.saver.save(sess,args.transfer_model_path)
