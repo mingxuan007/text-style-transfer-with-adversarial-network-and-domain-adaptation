@@ -1,8 +1,8 @@
 import tensorflow as tf
 
-from network.nn import *
+from ops import *
 from models import BaseModel
-from utils import *
+from until import *
 import os
 from tensorflow.contrib.rnn import GRUCell
 
@@ -270,10 +270,10 @@ class Model(BaseModel):
             feed_dict[self.sd_dec_mask] = sd_batch.dec_padding_mask
         return feed_dict
 
-    def run_train_step(self, sess, batch, sd_batch, accumulator, epoch):
+    def run_train_step(self, sess, batch, sd_batch, accumulator, epoch,pretimes):
         feed_dict = self._make_feed_dict(batch, sd_batch)
         #pretrain
-        if epoch <= 5:
+        if epoch <= pretimes:
             to_return = {'loss_rec': self.loss_rec,
                          'loss_recz': self.loss_recz,
                          'loss_style': self.style_adversary_loss,
