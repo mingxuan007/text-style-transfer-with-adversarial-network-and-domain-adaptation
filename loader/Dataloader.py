@@ -10,7 +10,7 @@ import os
 # for every sentence properties
 class Example(object):
    
-    def __init__(self, review, ref, label, vocab, hps,mode=0):
+    def __init__(self, review, ref, label, vocab, hps):
        
         self.hps = hps
 
@@ -49,9 +49,7 @@ class Example(object):
         return inp, target
 
     def pad_encoder_decoder_input(self, batch_len):
-        # whether add noise
-        if self.hps.noise_word:
-            self.enc_input = self.noise(self.enc_input, self.unk)
+  
         # enc_input doesn't need <START> or <END>
         if len(self.enc_input) < batch_len - 1:
             padding = [self.pad] * (batch_len-1 - len(self.enc_input))
@@ -85,10 +83,9 @@ class Batch(object):
     def init_encoder_decoder_seq(self, example_list, hps):
         # Encoder seq
         # Note: our enc_batch can have different length (second dimension) for each batch because we use dynamic_rnn for the encoder.
-        if hps.trim_padding:
-            batch_len = max([ex.dec_len for ex in example_list])
-        else:
-            batch_len = hps.max_len
+
+
+        batch_len = hps.max_len
         # the main length is 5
         batch_len = max(batch_len, 5)
         batch_size = len(example_list)
@@ -193,7 +190,7 @@ class Dataloader(object):
                 score = 1 if dict_example["score"] > 0 else 0
 
                 if mode == 'test':
-                    example = Example(review, review, score, self._vocab, self._hps, mode=1)
+                    example = Example(review, review, score, self._vocab, self._hps)
                 else:
                     example = Example(review, review, score, self._vocab, self._hps)
                 if score == 1:
