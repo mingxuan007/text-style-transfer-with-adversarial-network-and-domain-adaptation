@@ -12,7 +12,7 @@ from datetime import datetime as dt
 experiment_timestamp = dt.now().strftime("%Y%m%d%H%M%S")
 save_directory = "./saved-models/{}".format(experiment_timestamp)
 
-def load_arguments():
+def load_arguments(p):
     argparser = argparse.ArgumentParser(sys.argv[0])
     # data path
     argparser.add_argument('--dataDir',
@@ -22,9 +22,7 @@ def load_arguments():
             type=str,
             default='yelp',
             help='if doman_adapt enable, dataset means target dataset')
-    argparser.add_argument('--style_words_path',
-            type=str,
-            default='./style_words/yelp.txt')
+
     argparser.add_argument('--modelDir',
             type=str,
             default='./save_model')
@@ -34,7 +32,7 @@ def load_arguments():
     #glove100d   path
     argparser.add_argument('--validation_embeddings_file_path',
             type=str,
-            default='')
+            default='/share/nishome/20010431_1/Documents/glove.6B.100d.txt')
     argparser.add_argument('--style_file_path',
             type=str,
             default='./save_model/style')
@@ -50,11 +48,11 @@ def load_arguments():
             default=128)
     argparser.add_argument('--pretrain_epochs',
             type=int,
-            default=5,
+            default=1,
             help='max pretrain epoch for LM.')
     argparser.add_argument('--max_epochs',
             type=int,
-            default=20)
+            default=30)
     argparser.add_argument('--max_len',
             type=int,
             default=16,
@@ -164,30 +162,28 @@ def load_arguments():
 
 
     final_log_file = log_dir / log_file
+    if p==0:
+        head = '%(asctime)-15s %(message)s'
+        logging.basicConfig(filename=str(final_log_file),
+                            format=head)
+        logger = logging.getLogger()
+        logger.setLevel(logging.INFO)
+        console = logging.StreamHandler()
+        logging.getLogger('').addHandler(console)
 
-    head = '%(asctime)-15s %(message)s'
-    logging.basicConfig(filename=str(final_log_file),
-                        format=head)
-    logger = logging.getLogger()
-    logger.setLevel(logging.INFO)
-    console = logging.StreamHandler()
-    logging.getLogger('').addHandler(console)
 
 
-    logger.info('------------------------------------------------')
-    logger.info(pprint.pformat(args))
-    logger.info('------------------------------------------------')
 
     return args
 
 def update_domain_adapt_datapath(args):
     # update data path
-    args.dataDir = os.path.join(args.dataDir, 'data')
+
     # target_data
     target_data_root = os.path.join(args.dataDir, args.dataset)
     args.target_train_path = os.path.join(target_data_root, 'train')
     args.train_path = os.path.join(target_data_root, 'train')
- 
+    args.style_words_path = './style-words/'+args.dataset+'.txt'
     args.target_test_path = os.path.join(target_data_root, 'test')
     args.test_path = os.path.join(target_data_root, 'test')
     # the vocabulary used for classifier evaluation
@@ -206,7 +202,7 @@ def update_domain_adapt_datapath(args):
         args.dataDir, '_'.join([args.source_dataset, args.dataset, 'multi_vocab']))
 
     # update output path
-    args.modelDir = os.path.join(args.modelDir, 'save_model')
+
     
     args.lm_path = os.path.join(args.modelDir, 'lm', args.dataset)
     args.transfer_model_path = os.path.join(args.modelDir, 'transfer')
