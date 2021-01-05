@@ -21,7 +21,7 @@ first: to download the yelp and imdb dataset from [the repository](https://githu
 
 second: to run data_filter.py to filter the imdb dataset;
 
-third: to download glove 300d 100d, and add the path in the corresponding parameters of config.py and style.py, domain.py;
+third: to download glove 300d 100d, and add the path in the corresponding parameters of config.py and classifier/style.py, classifier/domain.py;
 
 forth: to add relative parameters of mode paths, training;
 
