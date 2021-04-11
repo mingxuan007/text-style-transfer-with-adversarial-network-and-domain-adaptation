@@ -30,4 +30,4 @@ fifth: to run classifier/style.py and domain train  style and domain classifiers
 sixth: to run start-train.py for transferring sentences
        
 ### Acknowledge
-The publication of the paper cannot leave with the helps and suggestions of the reviewers, they guide me how to improve my paper well; and my teacher Min He is a good teacher to support me to research new direction. And i am appreciate the journal -- applied intelligence which provide the chance for me to publish my paper.
+The publication of the paper cannot leave with the helps and suggestions of the reviewers, they guide me how to improve my paper well; and my teacher Min He is a good teacher to support me to research new direction. And i am appreciate the journal -- applied intelligence which provide the chance for me to publish my paper. Lastly, i am very grateful for the researchers of style transfer, the public codes and the papers of them let me learn a lot.
