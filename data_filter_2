@@ -2,9 +2,7 @@ a1=''     #input_file
 a2=''    #output
 import re
 def clean_text(string):
-    string = re.sub(r"\.", "", string)
-    string = re.sub(r"\!", "", string)
-    string = re.sub(r"\?", "", string)
+
     string = re.sub(r"\\n", " ", string)
     string = re.sub(r"\'m", " am", string)
     string = re.sub(r"\'ve", " have", string)
