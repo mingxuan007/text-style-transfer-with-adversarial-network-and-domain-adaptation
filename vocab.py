@@ -37,13 +37,12 @@ def build_vocab(data_path, save_path, min_occur=1):
 
 
 
-    with open(data_path, 'r', 'utf-8') as f:
+    with open(data_path, 'r') as f:
         while True:
             string_ = f.readline()
             if not string_: break
             dict_example = json.loads(string_)
             sent = dict_example["review"]
-            # ipdb.set_trace()
             words += sent.split()
 
     cnt = Counter(words)
