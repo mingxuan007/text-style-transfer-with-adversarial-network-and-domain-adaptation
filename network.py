@@ -64,12 +64,16 @@ class Model(BaseModel):
             real_sents = tf.nn.embedding_lookup(classifier_embedding, self.dec_inputs[:, 1:])
             fake_sents = tf.tensordot(soft_tsf_ids, classifier_embedding, [[2], [0]])
             fake_sents = fake_sents[:, :-1, :]  # make the dimension the same as real sents
+                        mask = tf.sequence_mask(self.enc_lens, self.max_len - 1, dtype=tf.float32)
+            mask = tf.expand_dims(mask, -1)
+            real_sents *= mask
+            fake_sents *= mask
             rnn_outputs, _ = bi_rnn(GRUCell(HIDDEN_SIZE), GRUCell(HIDDEN_SIZE),
                                     inputs=real_sents, sequence_length=self.enc_lens, dtype=tf.float32)
             rnn_outputsy, _ = bi_rnn(GRUCell(HIDDEN_SIZE), GRUCell(HIDDEN_SIZE),
                                      inputs=fake_sents, sequence_length=self.enc_lens, dtype=tf.float32)
             attention_output = self.attention(rnn_outputs)
-            # mask the sequences
+            
             drop = tf.nn.dropout(attention_output, self.dropout)
             attention_outputy = self.attention(rnn_outputsy)
 
