@@ -10,6 +10,7 @@ import json
 logger = logging.getLogger(__name__)
 from nltk.corpus import stopwords
 from sklearn.feature_extraction import stop_words
+# from sklearn.feature_extraction.text import ENGLISH_STOP_WORDS as stop_words
 from spacy.lang.en.stop_words import STOP_WORDS as spacy_stopwords
 from scipy.spatial.distance import cosine
 import statistics
