@@ -36,7 +36,7 @@ def build_vocab(data_path, save_path, min_occur=1):
 
 
 
-
+    # need to notice the .txt
     with open(data_path, 'r') as f:
         while True:
             string_ = f.readline()
