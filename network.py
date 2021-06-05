@@ -68,6 +68,7 @@ class Model(BaseModel):
             mask = tf.expand_dims(mask, -1)
             real_sents *= mask
             fake_sents *= mask
+            # tf.nn.rnn_cell.GRUCell (can replace GRUCell with it)
             rnn_outputs, _ = bi_rnn(GRUCell(HIDDEN_SIZE), GRUCell(HIDDEN_SIZE),
                                     inputs=real_sents, sequence_length=self.enc_lens, dtype=tf.float32)
             rnn_outputsy, _ = bi_rnn(GRUCell(HIDDEN_SIZE), GRUCell(HIDDEN_SIZE),
