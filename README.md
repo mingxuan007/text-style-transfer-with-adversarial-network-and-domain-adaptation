@@ -17,7 +17,7 @@ codes have been uploading and bebugged, welcome to learn my paper (doi: 10.1007/
    code:[go](https://github.com/cookielee77/DAST/tree/master/network)
    
 ### Start
-first: to download the yelp and imdb dataset from [the repository](https://github.com/cookielee77/DAST/tree/master/network) and put it to the data folder (you can use data_filter.py and data_filter_2.py to preprocess data), download the glove 100d for the validation path in config.py with website(http://nlp.stanford.edu/data/glove.6B.zip);
+first: to download the yelp and imdb dataset from [the repository](https://github.com/cookielee77/DAST/tree/master/network) and put it to the data folder (you can use data_filter.py and data_filter_2.py to preprocess data), download the glove 100d for the validation path in config.py with website (http://nlp.stanford.edu/data/glove.6B.zip);
 
 second: to run data_filter.py to filter the imdb dataset;
 
