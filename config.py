@@ -22,7 +22,9 @@ def load_arguments(p):
             type=str,
             default='yelp',
             help='if doman_adapt enable, dataset means target dataset')
-
+    argparser.add_argument('--vocab_path',
+            type=str,
+            default='./save_model/style/vocab.txt')
     argparser.add_argument('--modelDir',
             type=str,
             default='./save_model')
