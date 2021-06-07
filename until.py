@@ -210,8 +210,7 @@ def batch_iter(data, batch_size, num_epochs, shuffle=True):
             end_index = min((batch_num + 1) * batch_size, data_size)
             yield shuffled_data[start_index:end_index]
 def get_style_transfer_score(classifier_saved_model_path, text_file, label):
-    with open(os.path.join(classifier_saved_model_path,
-                           "vocab.txt"), 'r') as json_file:
+    with open(args.vocab_path, 'r') as json_file:
         word_index = json.load(json_file)
     vocab_size = len(word_index)
 
