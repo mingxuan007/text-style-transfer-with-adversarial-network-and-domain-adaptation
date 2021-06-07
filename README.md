@@ -25,7 +25,7 @@ third: to download glove 300d 100d, and add the path in the corresponding parame
 
 forth: to add relative parameters of mode paths, training;
 
-fifth: to run classifier/style.py and domain train  style and domain classifiers to evaluate the transferred sentences;
+fifth: to run classifier/style-classifier.py and domain-classifier.py to train  style and domain classifiers to evaluate the transferred sentences, and give the corresponding path in the config.py;
 
 sixth: to run start-train.py for transferring sentences
        
