@@ -75,7 +75,7 @@ def evaluation(sess, vocab, batches, model, path,output_path, epoch ):
        domain_model_path, transfer, 1)
     glove_model = load_glove_model(validation_embeddings_file_path)
     content_preservation_score = get_content_preservation_score(
-        ori_ref, ltsf, args.validation_embeddings_file_path)
+        ori_ref, ltsf, glove_model)
     word_overlap_score = get_word_overlap_score(
         ori_ref, ltsf)
     ori_b = []
