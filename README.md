@@ -1,5 +1,6 @@
 ## Non-parallel text style transfer with domain adaptation and an attention model (include adversarial network)
 codes have been uploading and bebugged, welcome to learn my paper (doi: 10.1007/s10489-020-02077-5) though the model in it is not very advanced.)
+the needed packages: tensorflow(1.12 - 1.15), nltk, sklearn ....
 ### The relevant papers are 
    1.  [Style transfer from non-parallel text by cross-alignment](https://arxiv.org/pdf/1705.09655.pdf) 
    code1:[go](https://github.com/shentianxiao/language-style-transfer) code2:[go](https://github.com/cookielee77/DAST/tree/master/network)
