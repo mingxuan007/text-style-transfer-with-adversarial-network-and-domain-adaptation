@@ -102,8 +102,8 @@ def load_glove_model(glove_file):
     return model
 
 
-def get_sentence_embedding(tokens,path):
-    model = load_glove_model(path)
+def get_sentence_embedding(tokens,model):
+    
     embeddings = np.asarray([model[token] for token in tokens if token in model])
 
     min_embedding = np.min(embeddings, axis=0)
