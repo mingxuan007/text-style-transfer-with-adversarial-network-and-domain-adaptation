@@ -17,8 +17,13 @@ the needed packages: tensorflow(1.12 - 1.15), nltk, sklearn ....
    5.  [Domain adaptive text style transfer](https://arxiv.org/pdf/1908.09395.pdf)
    code:[go](https://github.com/cookielee77/DAST/tree/master/network)
    
+   
+### supplement
+sorry that the primitive py-file, that for extracting style words, has loss in the computer server of my school (i left the project files for a long time and the computer server was fixed once), then i write a new file to get the style words with the frequency ratio, however the WO score promote to 0.763 from 0.588 in yelp corpus. Thus if you do contrast experiments with other frameworks, you should keep the style words coincident for evaluation.
 ### Start
 first: to download the yelp and imdb dataset from [the repository](https://github.com/cookielee77/DAST/tree/master/network) and put it to the data folder (you can use data_filter.py and data_filter_2.py to preprocess data), download the glove 100d for the validation path in config.py with website (http://nlp.stanford.edu/data/glove.6B.zip);
+you can utilize the get_style_words.py to get the style words (you can also utilize other methods to obtain the style words)
+
 
 second: to run data_filter.py to filter the imdb dataset;
 
