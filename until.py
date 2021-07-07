@@ -9,8 +9,8 @@ import json
 
 logger = logging.getLogger(__name__)
 from nltk.corpus import stopwords
-from sklearn.feature_extraction import stop_words
-# from sklearn.feature_extraction.text import ENGLISH_STOP_WORDS as stop_words
+
+from sklearn.feature_extraction.text import ENGLISH_STOP_WORDS as stop_words
 from spacy.lang.en.stop_words import STOP_WORDS as spacy_stopwords
 from scipy.spatial.distance import cosine
 import statistics
@@ -173,7 +173,7 @@ def get_word_overlap_score(actual_word_lists, generated_word_lists):
 def get_stopwords():
     nltk_stopwords = set(stopwords.words('en'))
     #print(nltk_stopwords)
-    sklearn_stopwords = stop_words.ENGLISH_STOP_WORDS
+    sklearn_stopwords = stop_words
 
     all_stopwords = set()
     all_stopwords |= spacy_stopwords
